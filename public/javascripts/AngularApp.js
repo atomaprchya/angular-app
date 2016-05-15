@@ -19,7 +19,7 @@ $scope.posts = posts.posts;
 
 $scope.addPost = function(){
   if(!$scope.title || $scope.title === '') { return; }
-	posts.create({
+	 posts.create({
     title: $scope.title,
     link: $scope.link,
   });
@@ -47,8 +47,11 @@ $scope.incrementUpvotes = function(post) {
 }]);
 
 
-app.factory('posts', [function(){
-  o.getAll = function() {
+app.factory('posts', ['$http', function($http){
+  var o = {
+    posts: []
+  };
+   o.getAll = function() {
     return $http.get('/posts').success(function(data){
       angular.copy(data, o.posts);
     });
@@ -73,10 +76,10 @@ function($stateProvider, $urlRouterProvider) {
       templateUrl: '/home.html',
       controller: 'MainCtrl',
       resolve: {
-	postPromise: ['posts', function(posts){
-	return posts.getAll();
-	}]
-	}
+	    postPromise: ['posts', function(posts){
+	      return posts.getAll();
+	    }]
+  }
     }).
 	state('posts', {
 	url: '/posts/{id}',
